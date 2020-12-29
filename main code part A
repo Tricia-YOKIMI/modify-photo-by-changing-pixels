@@ -1,0 +1,385 @@
+package finalCW3;
+
+import java.awt.Color;
+import java.awt.image.*;
+import java.io.File;
+import java.awt.*;
+
+import javax.imageio.ImageIO;
+
+
+public class CW3_Part_A {
+  
+    
+    // Returns a new picture that tilts it 30 degrees clockwise.
+    public static Picture tilt(Picture picture) {
+    	
+    	int w = picture.width();
+    	int h = picture.height();
+        Picture tiltPicture = new Picture(w,h);
+        double cw = 0.5*(w-1);
+        double hc = 0.5*(h-1);
+        for (int row = 0; row < h; row++){
+            for (int col = 0; col < w; col++){
+                int col1 = (int) ((col-cw)*Math.cos(Math.toRadians(330))-(row-hc)*Math.sin(Math.toRadians(330))+cw);
+                int row1 = (int) ((col-cw)*Math.sin(Math.toRadians(330))+(row-hc)*Math.cos(Math.toRadians(330))+hc);
+                if (0<=col1 && col1<w && 0<=row1 && row1<h){
+                    Color color = picture.getColor(col1, row1);
+                    tiltPicture.setColor(col,row,color);
+                }
+            }
+        }  
+
+        return tiltPicture;
+    }
+    
+  
+    
+    // Returns a new picture that applies an emboss filter to the given picture.
+    public static Picture emboss(Picture picture) {
+    
+    	int w = picture.width();
+    	int h = picture.height();
+    	Picture embossPicture = new Picture(w,h);
+        for (int row = 0; row < h; row++){
+            for (int col = 0; col < w; col++){
+            	float r,g,b;
+            	Color color = picture.getColor(col,row);
+            	r = color.getRed();
+            	g = color.getGreen();
+            	b = color.getBlue();
+            	int left = col-1;
+            	int right = col+1;
+            	int top = row-1;
+            	int bottom = row+1;
+            	
+            	if(col==0)
+            		left = w-1;
+            	if(col==w-1)
+            		right = 0;
+            	if(row==0)
+            		top = h-1;
+            	if(row==h-1)
+            		bottom = 0;
+            	
+            	r = (-2)*picture.getColor(left,top).getRed()+
+            		(-1)*picture.getColor(col,top).getRed()+
+            		(0)*picture.getColor(right,top).getRed()+
+            		(-1)*picture.getColor(left,row).getRed()+
+            		(1)*picture.getColor(col,row).getRed()+
+            		(1)*picture.getColor(right,row).getRed()+
+            		(0)*picture.getColor(left,bottom).getRed()+
+            		(1)*picture.getColor(col,bottom).getRed()+
+            		(2)*picture.getColor(right,bottom).getRed();
+            	
+            	g = (-2)*picture.getColor(left,top).getGreen()+
+                		(-1)*picture.getColor(col,top).getGreen()+
+                		(0)*picture.getColor(right,top).getGreen()+
+                		(-1)*picture.getColor(left,row).getGreen()+
+                		(1)*picture.getColor(col,row).getGreen()+
+                		(1)*picture.getColor(right,row).getGreen()+
+                		(0)*picture.getColor(left,bottom).getGreen()+
+                		(1)*picture.getColor(col,bottom).getGreen()+
+                		(2)*picture.getColor(right,bottom).getGreen();
+            	
+            	b = (-2)*picture.getColor(left,top).getBlue()+
+                		(-1)*picture.getColor(col,top).getBlue()+
+                		(0)*picture.getColor(right,top).getBlue()+
+                		(-1)*picture.getColor(left,row).getBlue()+
+                		(1)*picture.getColor(col,row).getBlue()+
+                		(1)*picture.getColor(right,row).getBlue()+
+                		(0)*picture.getColor(left,bottom).getBlue()+
+                		(1)*picture.getColor(col,bottom).getBlue()+
+                		(2)*picture.getColor(right,bottom).getBlue();
+            	
+            	if(r>255)
+            		r=255;
+            	if(g>255)
+            		g=255;
+            	if(b>255)
+            		b=255;
+            	if(r<0)
+            		r=0;
+            	if(g<0)
+            		g=0;
+            	if(b<0)
+            		b=0;
+            	
+            	Color eColor = new Color((int)r,(int)g,(int)b);
+            	
+            	if (0<=col && col<w && 0<=row && row<h){
+            		embossPicture.setColor(col, row, eColor);
+            	}
+            }
+        }
+        
+       return embossPicture;
+ 
+    }
+    
+    
+  
+    
+    // Returns a new picture that applies a blur filter to the given picture.
+    public static Picture blur(Picture picture) {
+
+    	int w = picture.width();
+    	int h = picture.height();
+    	Picture blurPicture = new Picture(w,h);
+        for (int row = 0; row < h; row++){
+            for (int col = 0; col < w; col++){
+
+            	double red = picture.getColor(col, row).getRed();
+            	double green = picture.getColor(col, row).getGreen();
+            	double blue = picture.getColor(col, row).getBlue();
+            	
+            	for(int x=1;x<=4;x++) {
+            		int left = col-x;
+            		if(left<0) {
+            			left = picture.width()+left;
+            		}
+                	int right = col+x;
+                	if(right>picture.width()-1) {
+                		right = right-picture.width();
+                	}
+                	int top = row-x;
+                	if(top<0) {
+                		top = picture.height()+top;
+                	}
+                	int bottom = row+x;
+                	if(bottom>picture.height()-1) {
+                		bottom=bottom-picture.height();
+                	}
+                	red=red+picture.getColor(left, top).getRed()+picture.getColor(right, bottom).getRed();
+                	
+            	}
+            	
+            	for(int x=1;x<=4;x++) {
+            		int left = col-x;
+            		if(left<0) {
+            			left = picture.width()+left;
+            		}
+                	int right = col+x;
+                	if(right>picture.width()-1) {
+                		right = right-picture.width();
+                	}
+                	int top = row-x;
+                	if(top<0) {
+                		top = picture.height()+top;
+                	}
+                	int bottom = row+x;
+                	if(bottom>picture.height()-1) {
+                		bottom=bottom-picture.height();
+                	}
+                	green=green+picture.getColor(left, top).getGreen()+picture.getColor(right, bottom).getGreen();
+                	
+            	}
+            	
+            	for(int x=1;x<=4;x++) {
+            		int left = col-x;
+            		if(left<0) {
+            			left = picture.width()+left;
+            		}
+                	int right = col+x;
+                	if(right>picture.width()-1) {
+                		right = right-picture.width();
+                	}
+                	int top = row-x;
+                	if(top<0) {
+                		top = picture.height()+top;
+                	}
+                	int bottom = row+x;
+                	if(bottom>picture.height()-1) {
+                		bottom=bottom-picture.height();
+                	}
+                	blue=blue+picture.getColor(left, top).getBlue()+picture.getColor(right, bottom).getBlue();
+                	
+            	}
+            	
+            	//float r=(float)red/9;
+            	//float g=(float)green/9;
+            	//float b=(float)blue/9;
+                     	
+            	red= red/9;
+            	green= green/9;
+            	blue= blue/9;
+            	
+            	if(red>255)
+               		red=255;
+               	if(green>255)
+               		green=255;
+               	if(blue>255)
+               		blue=255;
+               	if(red<0)
+               		red=0;
+               	if(green<0)
+               		green=0;
+               	if(blue<0)
+               		blue=0;
+            	
+            	Color eColor = new Color((int)red,(int)green,(int)blue);
+
+            	if (0<=col && col<w && 0<=row && row<h){
+            		blurPicture.setColor(col, row, eColor);
+            	}
+            }
+        }
+        
+       return blurPicture;
+    	
+    }
+    
+    
+
+    
+    // Returns a new picture that applies an emboss filter to the given picture.
+    public static Picture edge(Picture picture) {
+    	Picture grayPic = CW3_Example.grayScale(picture);
+    	
+    	int w = picture.width();
+    	int h = picture.height();
+    	Picture newpic = new Picture(w,h);
+    	
+        for (int row = 0; row < h; row++){
+            for (int col = 0; col < w; col++){
+            	double rx,gx,bx,ry,gy,by;
+            	Color color = picture.getColor(col,row);
+            	rx = color.getRed();
+            	gx = color.getGreen();
+            	bx = color.getBlue();
+            	ry = color.getRed();
+            	gy = color.getGreen();
+            	by = color.getBlue();
+            	
+            	int left = col-1;
+            	int right = col+1;
+            	int top = row-1;
+            	int bottom = row+1;
+            	
+            	if(col==0)
+            		left = w-1;
+            	if(col==w-1)
+            		right = 0;
+            	if(row==0)
+            		top = h-1;
+            	if(row==h-1)
+            		bottom = 0;
+            	
+            	rx = (-1)*grayPic.getColor(left,top).getRed()+
+            		(0)*grayPic.getColor(col,top).getRed()+
+            		(1)*grayPic.getColor(right,top).getRed()+
+            		(-2)*grayPic.getColor(left,row).getRed()+
+            		(0)*grayPic.getColor(col,row).getRed()+
+            		(2)*grayPic.getColor(right,row).getRed()+
+            		(-1)*grayPic.getColor(left,bottom).getRed()+
+            		(0)*grayPic.getColor(col,bottom).getRed()+
+            		(1)*grayPic.getColor(right,bottom).getRed();
+            	
+            	gx = (-1)*grayPic.getColor(left,top).getGreen()+
+                	(0)*grayPic.getColor(col,top).getGreen()+
+                		(1)*grayPic.getColor(right,top).getGreen()+
+                		(-2)*grayPic.getColor(left,row).getGreen()+
+                		(0)*grayPic.getColor(col,row).getGreen()+
+                		(2)*grayPic.getColor(right,row).getGreen()+
+                		(-1)*grayPic.getColor(left,bottom).getGreen()+
+                		(0)*grayPic.getColor(col,bottom).getGreen()+
+                		(1)*grayPic.getColor(right,bottom).getGreen();
+            	
+            	bx = (-1)*grayPic.getColor(left,top).getBlue()+
+                		(0)*grayPic.getColor(col,top).getBlue()+
+                		(1)*grayPic.getColor(right,top).getBlue()+
+                		(-2)*grayPic.getColor(left,row).getBlue()+
+                		(0)*grayPic.getColor(col,row).getBlue()+
+                		(2)*grayPic.getColor(right,row).getBlue()+
+                		(-1)*grayPic.getColor(left,bottom).getBlue()+
+                		(0)*grayPic.getColor(col,bottom).getBlue()+
+                		(1)*grayPic.getColor(right,bottom).getBlue();
+            	
+            	
+            	ry = (1)*grayPic.getColor(left,top).getRed()+
+                		(2)*grayPic.getColor(col,top).getRed()+
+                		(1)*grayPic.getColor(right,top).getRed()+
+                		(0)*grayPic.getColor(left,row).getRed()+
+                		(0)*grayPic.getColor(col,row).getRed()+
+                		(0)*grayPic.getColor(right,row).getRed()+
+                		(-1)*grayPic.getColor(left,bottom).getRed()+
+                		(-2)*grayPic.getColor(col,bottom).getRed()+
+                		(-1)*grayPic.getColor(right,bottom).getRed();
+                	
+                gy = (1)*grayPic.getColor(left,top).getGreen()+
+                    (2)*grayPic.getColor(col,top).getGreen()+
+                    (1)*grayPic.getColor(right,top).getGreen()+
+                    (0)*grayPic.getColor(left,row).getGreen()+
+                    (0)*grayPic.getColor(col,row).getGreen()+
+                    (0)*grayPic.getColor(right,row).getGreen()+
+                    (-1)*grayPic.getColor(left,bottom).getGreen()+
+                    (-2)*grayPic.getColor(col,bottom).getGreen()+
+                    (-1)*grayPic.getColor(right,bottom).getGreen();
+                	
+               by = (1)*grayPic.getColor(left,top).getBlue()+
+                    (2)*grayPic.getColor(col,top).getBlue()+
+                    (1)*grayPic.getColor(right,top).getBlue()+
+                    (0)*grayPic.getColor(left,row).getBlue()+
+                    (0)*grayPic.getColor(col,row).getBlue()+
+                    (0)*grayPic.getColor(right,row).getBlue()+
+                    (-1)*grayPic.getColor(left,bottom).getBlue()+
+                    (-2)*grayPic.getColor(col,bottom).getBlue()+
+                    (-1)*grayPic.getColor(right,bottom).getBlue();
+               
+               double r,g,b; 
+             r= 255- (int)Math.hypot(rx, ry);
+             g=255- (int)Math.hypot(gx, gy);
+             b= 255-(int)Math.hypot(bx, by);               
+            
+            if(r>255)
+           		r=255;
+           	if(g>255)
+           		g=255;
+           	if(b>255)
+           		b=255;
+           	if(r<0)
+           		r=0;
+           	if(g<0)
+           		g=0;
+           	if(b<0)
+           		b=0;
+           	
+           
+           	//Color eColor = new Color(Math.round(r),Math.round(g),Math.round(b));
+           Color eColor = new Color((int)r,(int)g,(int)b);
+        	
+        	if (0<=col && col<w && 0<=row && row<h){
+        		newpic.setColor(col, row, eColor);
+        	}
+        	
+           }
+        }
+        return newpic;
+    }
+    
+    
+    public static void main(String[] args) {
+        
+        Picture andrew = new Picture("Andrew.png");
+        andrew.show();
+        
+        tilt(andrew).show();
+        Picture tiltAndrew = new Picture("TiltAndrew.png");
+        System.out.println(tilt(andrew).equals(tiltAndrew));
+
+        emboss(andrew).show();
+        Picture embossAndrew = new Picture("EmbossAndrew.png");
+        System.out.println(emboss(andrew).equals(embossAndrew));
+        
+        blur(andrew).show();
+        Picture blurAndrew = new Picture("BlurAndrew.png");
+        System.out.println(blur(andrew).equals(blurAndrew));
+
+        edge(andrew).show();
+        Picture edgeAndrew = new Picture("EdgeAndrew.png");
+        System.out.println(edge(andrew).equals(edgeAndrew));
+
+        
+    }
+    
+}
