@@ -1,1 +1,0 @@
-# modify-photo-by-changing-pixels
