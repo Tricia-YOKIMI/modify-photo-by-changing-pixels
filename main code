@@ -2,17 +2,12 @@
 
 import java.awt.Color;
 
-/**
- * CPT105 2020 Coursework 3 Part B
- */
+
 public class CW3_Part_B  {
     
-    /****************
-     * CW3 Part B.1 *
-     ****************/
     
-    // Original picture and positionally tranformed picture.
-
+    
+   
 	
     public static Picture positionalTransform(Picture picture) {
     
@@ -67,11 +62,7 @@ public class CW3_Part_B  {
         return newPicture;
     }
     
-    /****************
-     * CW3 Part B.2 *
-     ****************/
-    
-    // Original picture and color tranformed picture.
+
     public static Picture colorTransform(Picture picture) {
     	int w = picture.width();
     	int h = picture.height();
