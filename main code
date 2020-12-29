@@ -1,0 +1,185 @@
+CPT105 2020 CW3 Part C_2
+------------------------------------------------------------------------------------
+
+Name       :  Wenxuan Zheng
+Student ID :  1928175
+
+------------------------------------------------------------------------------------
+
+Copy paste ALL the content of your CW3_Part_B.java below the line ==================
+
+In particular, it contains and must match the two methods that you submit in Part B.
+
+====================================================================================
+
+import java.awt.Color;
+
+/**
+ * CPT105 2020 Coursework 3 Part B
+ */
+public class CW3_Part_B  {
+    
+    /****************
+     * CW3 Part B.1 *
+     ****************/
+    
+    // Original picture and positionally tranformed picture.
+
+	
+    public static Picture positionalTransform(Picture picture) {
+    
+    	int w = picture.width();
+    	int h = picture.height();
+
+    	Picture newPicture = new Picture(2*w,h);
+    	
+    	for (int rowp = 0; rowp < h; rowp++){
+              for (int colp = 0; colp < w; colp++){
+            	  Color color = picture.getColor(colp, rowp);
+            	  int r = color.getRed();
+              	  int g = color.getGreen();
+              	  int b = color.getBlue();
+            	  Color pcolor = new Color((int)r,(int)g,(int)b);
+            	  newPicture.setColor(colp,rowp,pcolor);
+              }
+    	}
+
+
+        int oneThirdWidth = (int)(w-1)/3;
+        int oneThirdHeight = (int)(h-1)/3;
+        for (int row = 0; row < h; row++){
+            for (int col = 0; col < w; col++){
+            	if(col<oneThirdWidth||col>2*oneThirdWidth||row<oneThirdHeight||row>2*oneThirdHeight) {
+            		 Color color = picture.getColor(col, row);
+                     newPicture.setColor(w+col,row,color);
+            	}
+            }
+        }
+            
+        int oneNineWidth = (int)(picture.width()+1)/9;
+        int oneNineHeight = (int)(picture.height()+1)/9;
+        
+        for(int row1 = oneThirdHeight+1,row2 = 4*oneNineHeight+1; row1< 2*oneThirdHeight;row1=row1+3,row2++) {
+        	for(int col1 = oneThirdWidth,col2 =4*oneNineWidth;col1<2*oneThirdWidth+1;col1=col1+3,col2++) {
+        		Color color1 = picture.getColor(col2, row2);
+        		newPicture.setColor(w+col1,row1,color1);
+        		newPicture.setColor(w+col1-1,row1-1,color1);
+        		newPicture.setColor(w+col1-1,row1+1,color1);
+        		newPicture.setColor(w+col1+1,row1-1,color1);
+        		newPicture.setColor(w+col1+1,row1+1,color1);
+        		newPicture.setColor(w+col1,row1+1,color1);
+        		newPicture.setColor(w+col1,row1-1,color1);
+        		newPicture.setColor(w+col1+1,row1,color1);
+        		newPicture.setColor(w+col1-1,row1,color1);
+        	}
+        }
+        
+           
+        
+        return newPicture;
+    }
+    
+    /****************
+     * CW3 Part B.2 *
+     ****************/
+    
+    // Original picture and color tranformed picture.
+    public static Picture colorTransform(Picture picture) {
+    	int w = picture.width();
+    	int h = picture.height();
+    	Picture newpicture = new Picture(2*w,h);
+    	
+
+    	for (int rowp = 0; rowp < h; rowp++){
+              for (int colp = 0; colp < w; colp++){
+            	  double r = picture.getColor(colp, rowp).getRed();
+              	  double g = picture.getColor(colp, rowp).getGreen();
+              	  double b = picture.getColor(colp, rowp).getBlue();
+            	  Color pcolor = new Color((int)r,(int)g,(int)b);
+            	  newpicture.setColor(colp,rowp,pcolor);
+              }
+    	}
+
+    	
+        for (int row = 2; row < h-1; row=row+5){
+            for (int col = 2; col < w-1; col=col+5){
+            	double r,g,b;
+            	Color color = picture.getColor(col,row);
+            	r = color.getRed();
+            	g = color.getGreen();
+            	b = color.getBlue();
+            	int left = col-1;
+            	int left2 = col-2;
+            	int right = col+1;
+            	int right2 = col+2;
+            	int top = row-1;
+            	int top2 = row-2;
+            	int bottom = row+1;
+            	int bottom2 = row+2;
+            	
+            	if(col==0)
+            		left = 0;
+            	if(col==1)
+            		left2 = 0;
+            	if(col==w-1)
+            		right = w-1;
+            	if(col==w-2)
+            		right2 = w-1;
+            	if(row==0)
+            		top = 0;
+            	if(row==1)
+            		top2 = 0;
+            	if(row==h-1)
+            		bottom = h-1;
+            	if(row==h-2)
+            		bottom2 = h-1;
+            	
+            	double rate = 2.5;
+
+            	Color eColor = new Color((int)r,(int)g,(int)b);
+            	Color sColor = new Color((int)(r/rate),(int)(g/rate),(int)(b/rate));
+            	
+            	if (0<=col && col<w && 0<=row && row<h){
+            		newpicture.setColor(w+left, top, eColor);
+            		newpicture.setColor(w+col, top, eColor);
+            		newpicture.setColor(w+right, top, eColor);
+            		newpicture.setColor(w+left, row, eColor);
+            		newpicture.setColor(w+col, row, sColor);//color.BLACK
+            		newpicture.setColor(w+right, row, eColor);
+            		newpicture.setColor(w+left, bottom, eColor);
+            		newpicture.setColor(w+col, bottom, eColor);
+            		newpicture.setColor(w+right, bottom, eColor);
+            		newpicture.setColor(w+left2,top2,eColor);
+            		newpicture.setColor(w+left2,top,eColor);
+            		newpicture.setColor(w+left2,row,eColor);
+            		newpicture.setColor(w+left2,bottom,eColor);
+            		newpicture.setColor(w+left2,bottom2,eColor);
+            		newpicture.setColor(w+right2,top2,eColor);
+            		newpicture.setColor(w+right2,top,eColor);
+            		newpicture.setColor(w+right2,row,eColor);
+            		newpicture.setColor(w+right2,bottom,eColor);
+            		newpicture.setColor(w+right2,bottom2,eColor);
+            		newpicture.setColor(w+left,top2,eColor);
+            		newpicture.setColor(w+left,bottom2,eColor);
+            		newpicture.setColor(w+right,top2,eColor);
+            		newpicture.setColor(w+right,bottom2,eColor);
+            		newpicture.setColor(w+col,top2,eColor);
+            		newpicture.setColor(w+col,bottom2,eColor);
+            	}
+            	
+            }
+        }
+        
+        return newpicture;
+    }
+    
+ 
+    public static void main(String[] args) {
+        Picture andrew = new Picture("sample15.jpg");
+
+        positionalTransform(andrew).show();
+        colorTransform(andrew).show();
+        
+
+    }
+}
